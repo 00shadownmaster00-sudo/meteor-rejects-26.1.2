@@ -37,10 +37,11 @@ configurations {
 
 dependencies {
 	// This will make it work on most platforms. It automatically chooses the right dependencies at runtime.
-	extraLibs('dev.duti.acheong:cubiomes:1.22.3') { transitive = false }
-	extraLibs('dev.duti.acheong:cubiomes:1.22.3:linux64') { transitive = false }
-	extraLibs('dev.duti.acheong:cubiomes:1.22.3:osx') { transitive = false }
-	extraLibs('dev.duti.acheong:cubiomes:1.22.3:windows64') { transitive = false }
+// extraLibs('dev.duti.acheong:cubiomes:1.22.3') { transitive = false }
+// extraLibs('dev.duti.acheong:cubiomes:1.22.3:linux64') { transitive = false }
+// extraLibs('dev.duti.acheong:cubiomes:1.22.3:osx') { transitive = false }
+// extraLibs('dev.duti.acheong:cubiomes:1.22.3:windows64') { transitive = false }
+	implementation files('libs/cubiomes.dll')
 	// To change the versions see the gradle.properties file
 	// Minecraft 26.x ships de-obfuscated, so no mappings are declared.
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
