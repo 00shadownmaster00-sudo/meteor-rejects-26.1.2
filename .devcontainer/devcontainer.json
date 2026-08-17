@@ -1,0 +1,31 @@
+{
+  "name": "meteor-rejects",
+  "image": "mcr.microsoft.com/devcontainers/java:1-3-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "25",
+      "jdkDistro": "ms",
+      "installMaven": true,
+      "installGradle": false
+    }
+  },
+  "containerEnv": {
+    "JAVA_HOME": "/usr/local/sdkman/candidates/java/current",
+    "GRADLE_USER_HOME": "/workspaces/${localWorkspaceFolderBasename}/.gradle"
+  },
+  "remoteEnv": {
+    "JAVA_HOME": "/usr/local/sdkman/candidates/java/current",
+    "PATH": "/usr/local/sdkman/candidates/java/current/bin:${containerEnv:PATH}"
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vscjava.vscode-gradle",
+        "redhat.java",
+        "ms-vscode.vscode-json"
+      ]
+    }
+  }
+}

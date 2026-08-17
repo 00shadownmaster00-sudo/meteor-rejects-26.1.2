@@ -5,7 +5,7 @@ plugins {
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
@@ -36,6 +36,8 @@ configurations {
 }
 
 dependencies {
+	// Native cubiomes is the only remaining local dependency. Everything else that is available
+	// from Maven is resolved remotely to keep Codespaces builds free from local-file artifacts.
 	implementation files('libs/cubiomes.dll')
 	// To change the versions see the gradle.properties file
 	// Minecraft 26.x ships de-obfuscated, so no mappings are declared.
@@ -96,7 +98,7 @@ tasks.withType(JavaCompile).configureEach {
 	// The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
 	// JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
 	// We'll use that if it's available, but otherwise we'll use the older option.
-	def targetVersion = 25
+	def targetVersion = 21
 	if (JavaVersion.current().isJava9Compatible()) {
 		it.options.release = targetVersion
 	}
