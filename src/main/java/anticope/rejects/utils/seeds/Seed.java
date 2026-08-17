@@ -10,6 +10,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 
+import java.util.Locale;
+
 public class Seed {
     public final Long seed;
     public final MCVersion version;
@@ -31,8 +33,34 @@ public class Seed {
     public static Seed fromTag(CompoundTag tag) {
         return new Seed(
             tag.getLong("seed").orElse(0L),
-            MCVersion.fromString(tag.getString("version").orElse(""))
+            resolveVersion(tag.getString("version").orElse(""))
         );
+    }
+
+    public static MCVersion resolveVersion(String rawVersion) {
+        if (rawVersion == null || rawVersion.isBlank()) {
+            return MCVersion.latest();
+        }
+
+        MCVersion resolved = MCVersion.fromString(rawVersion);
+        if (resolved != null) {
+            return resolved;
+        }
+
+        String normalized = rawVersion.trim().toLowerCase(Locale.ROOT);
+        if (normalized.contains("26.") || normalized.contains("1.21")) {
+            return MCVersion.v1_21;
+        }
+        if (normalized.contains("1.20")) {
+            return MCVersion.v1_20;
+        }
+        if (normalized.contains("1.19")) {
+            return MCVersion.v1_19_4;
+        }
+        if (normalized.contains("1.18")) {
+            return MCVersion.v1_18;
+        }
+        return MCVersion.latest();
     }
 
     public Component toText() {

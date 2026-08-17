@@ -42,32 +42,16 @@ public class LocateCommand extends Command {
 					BlockPos playerPos = mc.player.blockPosition();
 					long seed = Seeds.get().getSeed().seed;
 					MCVersion version = Seeds.get().getSeed().version;
-					Cubiomes.MCVersion cubiomesVersion = null;
-					if (version.isNewerOrEqualTo(MCVersion.v1_20)) {
-						cubiomesVersion = Cubiomes.MCVersion.MC_1_20;
-					} else if (version.isNewerOrEqualTo(MCVersion.v1_19)) {
-						switch (version) {
-							case v1_19:
-							case v1_19_1:
-								cubiomesVersion = Cubiomes.MCVersion.MC_1_19;
-								break;
-							case v1_19_2:
-							case v1_19_3:
-							case v1_19_4:
-								cubiomesVersion = Cubiomes.MCVersion.MC_1_19_2;
-								break;
-							default:
-								throw new IllegalStateException("Unexpected value: " + version);
-						}
-					} else if (version.isNewerOrEqualTo(MCVersion.v1_18)) {
-						cubiomesVersion = Cubiomes.MCVersion.MC_1_18;
-					}
+					Cubiomes.MCVersion cubiomesVersion = resolveCubiomesVersion(version);
 					Pos pos = null;
 					if (cubiomesVersion != null) {
 						pos = Cubiomes.GetNearestStructure(feature, playerPos.getX(), playerPos.getZ(), seed,
 								cubiomesVersion);
 					} else {
 						BlockPos bpos = WorldGenUtils.locateFeature(feature, playerPos);
+						if (bpos == null) {
+							throw NOT_FOUND.create(feature);
+						}
 						pos = new Pos();
 						pos.x = bpos.getX();
 						pos.z = bpos.getZ();
@@ -90,5 +74,42 @@ public class LocateCommand extends Command {
 					}
 					throw NOT_FOUND.create(feature);
 				})));
+	}
+
+	private static Cubiomes.MCVersion resolveCubiomesVersion(MCVersion version) {
+		if (version == null) return null;
+		if (version.isNewerOrEqualTo(MCVersion.v1_21)) {
+			return resolveEnum("MC_26_2", "MC_26_1", "MC_1_21_3", "MC_1_21_1", "MC_1_21", "MC_1_20");
+		}
+		if (version.isNewerOrEqualTo(MCVersion.v1_20)) {
+			return resolveEnum("MC_1_20", "MC_1_20_6", "MC_1_19_2", "MC_1_19");
+		}
+		if (version.isNewerOrEqualTo(MCVersion.v1_19)) {
+			switch (version) {
+				case v1_19:
+				case v1_19_1:
+					return resolveEnum("MC_1_19", "MC_1_19_2");
+				case v1_19_2:
+				case v1_19_3:
+				case v1_19_4:
+					return resolveEnum("MC_1_19_2", "MC_1_19");
+				default:
+					throw new IllegalStateException("Unexpected value: " + version);
+			}
+		}
+		if (version.isNewerOrEqualTo(MCVersion.v1_18)) {
+			return resolveEnum("MC_1_18", "MC_1_19");
+		}
+		return null;
+	}
+
+	private static Cubiomes.MCVersion resolveEnum(String... names) {
+		for (String name : names) {
+			try {
+				return Enum.valueOf(Cubiomes.MCVersion.class, name);
+			} catch (IllegalArgumentException ignored) {
+			}
+		}
+		return null;
 	}
 }
